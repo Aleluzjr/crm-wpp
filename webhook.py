@@ -10,22 +10,29 @@ logging.basicConfig(
     format='%(asctime)s - %(message)s'
 )
 
-@app.route('/webhook', methods=['POST'])
+@app.route('/webhook', methods=['GET', 'POST'])
 def webhook():
     try:
-        # Receber os dados no formato JSON
-        data = request.json
-        if not data:
-            return jsonify({"error": "No JSON received"}), 400
+        # Validação do método da requisição
+        if request.method == 'GET':
+            # Resposta para validação da URL pela plataforma
+            return jsonify({"message": "Webhook is live!"}), 200
 
-        # Registrar os dados no arquivo de log
-        logging.info(f"Received data: {data}")
-        return jsonify({"message": "Data received successfully"}), 200
+        elif request.method == 'POST':
+            # Receber os dados no formato JSON
+            data = request.get_json()
+            if not data:
+                return jsonify({"error": "No JSON received"}), 400
+
+            # Registrar os dados no arquivo de log
+            logging.info(f"Received data: {data}")
+            return jsonify({"message": "Data received successfully"}), 200
 
     except Exception as e:
+        # Captura erros e registra no log
         logging.error(f"Error: {e}")
         return jsonify({"error": "Something went wrong"}), 500
-
+    
 # Rota para verificar se o servidor está funcionando
 @app.route('/', methods=['GET'])
 def home():
