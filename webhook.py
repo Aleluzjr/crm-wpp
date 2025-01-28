@@ -10,17 +10,9 @@ logging.basicConfig(
     format='%(asctime)s - %(message)s'
 )
 
-# Token para autenticação (exemplo)
-AUTH_TOKEN = 'SOME-VALUE'
-
 @app.route('/webhook', methods=['GET', 'POST'])
 def webhook():
     try:
-        # Verificar se a requisição contém o cabeçalho Authorization com o token correto
-        token = request.headers.get('Authorization')
-        if not token or token != f'Bearer {AUTH_TOKEN}':
-            return jsonify({"error": "Unauthorized"}), 401
-
         # Validação do método da requisição
         if request.method == 'GET':
             # Resposta para validação da URL pela plataforma
