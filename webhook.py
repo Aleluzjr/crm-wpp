@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 import logging
 import sys
+import os
 
 app = Flask(__name__)
 
@@ -14,6 +15,11 @@ logging.basicConfig(
 @app.route('/webhook', methods=['GET', 'POST'])
 def webhook():
     try:
+        # Verificar se o Content-Type é application/json
+        if request.content_type != 'application/json':
+            logging.error(f"Unsupported Media Type: {request.content_type}")
+            return jsonify({"error": "Invalid content type, expected application/json"}), 415
+
         # Validação do método da requisição
         if request.method == 'GET':
             # Resposta para validação da URL pela plataforma
@@ -43,5 +49,7 @@ def home():
     return "Webhook server is running!", 200
 
 if __name__ == '__main__':
-    # Inicia o servidor Flask
-    app.run(host='0.0.0.0', port=5000)
+    # Obter a porta do ambiente (Render define a variável PORT)
+    port = int(os.environ.get("PORT", 5000))
+    # Inicia o servidor Flask na porta correta
+    app.run(host='0.0.0.0', port=port)
