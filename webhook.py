@@ -19,7 +19,7 @@ logging.basicConfig(
 
 # Configuração da API de envio do WhatsApp
 TOKEN = os.getenv('TOKEN') # 🔴 Substitua pelo seu token da API
-URL_API = 'https://api-chat.oxygeni.com.br/api/messages/send'
+API_URL = os.getenv('API_URL')
 HEADERS = {
     'Authorization': f'Bearer {TOKEN}',
     'Content-Type': 'application/json'
