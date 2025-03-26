@@ -20,6 +20,12 @@ logging.basicConfig(
 # Configuração da API do WhatsApp
 TOKEN = os.getenv("WHATSAPP_API_TOKEN")  # Pega o token do .env
 URL_API = os.getenv("WHATSAPP_API_URL")  # Pega a URL da API do .env
+
+# Verifica se as variáveis de ambiente estão configuradas
+if not TOKEN or not URL_API:
+    logging.error("❌ WHATSAPP_API_TOKEN ou WHATSAPP_API_URL não configurados no .env")
+    raise ValueError("As variáveis de ambiente não estão definidas corretamente!")
+
 HEADERS = {
     'Authorization': f'Bearer {TOKEN}',
     'Content-Type': 'application/json'
@@ -41,9 +47,17 @@ def webhook():
             logging.error("❌ No data received")
             return jsonify({"error": "No data received"}), 400
 
-        logging.info(f"📩 Webhook recebido: {data}")
+        logging.info(f"📩 Webhook recebido: {data} ({type(data)})")
 
-        # Verifica se os dados contêm os campos necessários
+        # Se os dados vierem como uma lista, pegar o primeiro item
+        if isinstance(data, list):
+            data = data[0]  
+
+        if not isinstance(data, dict):
+            logging.error("❌ Dados inválidos: esperado JSON com chave-valor.")
+            return jsonify({"error": "Formato de dados inválido"}), 400
+
+        # Pegar os dados esperados
         numero = data.get("number")
         mensagem = data.get("message")
 
