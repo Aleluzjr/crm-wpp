@@ -47,23 +47,19 @@ def webhook():
             logging.error("❌ No data received")
             return jsonify({"error": "No data received"}), 400
 
-        logging.info(f"📩 Webhook recebido: {data} ({type(data)})")
+        logging.info(f"📩 Webhook recebido: {data}")
 
-        # Se os dados vierem como uma lista, pegar o primeiro item
-        if isinstance(data, list):
-            data = data[0]  
+        # Se os dados forem uma lista, pegar o primeiro item
+        if isinstance(data, list) and len(data) > 0:
+            data = data[0]
 
-        if not isinstance(data, dict):
-            logging.error("❌ Dados inválidos: esperado JSON com chave-valor.")
-            return jsonify({"error": "Formato de dados inválido"}), 400
+        # Verifica se os dados contêm os campos necessários
+        numero = data.get("telefones", {}).get("principal")  # Busca dentro do JSON aninhado
+        mensagem = f"Olá {data.get('nome', 'usuário')}, recebemos seu webhook!"
 
-        # Pegar os dados esperados
-        numero = data.get("number")
-        mensagem = data.get("message")
-
-        if not numero or not mensagem:
-            logging.error("❌ Campos 'number' e 'message' são obrigatórios.")
-            return jsonify({"error": "Campos 'number' e 'message' são obrigatórios"}), 400
+        if not numero:
+            logging.error("❌ Campo 'number' é obrigatório.")
+            return jsonify({"error": "Campo 'number' é obrigatório"}), 400
 
         # Criar payload para envio da mensagem
         payload = {"number": numero, "body": mensagem}
