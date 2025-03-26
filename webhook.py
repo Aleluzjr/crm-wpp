@@ -18,8 +18,8 @@ logging.basicConfig(
 )
 
 # Configuração da API do WhatsApp
-TOKEN = os.getenv("WHATSAPP_API_TOKEN")  # Pega o token do .env
-URL_API = os.getenv("WHATSAPP_API_URL")  # Pega a URL da API do .env
+TOKEN = os.getenv("TOKEN")  # Pega o token do .env
+URL_API = os.getenv("API_URL")  # Pega a URL da API do .env
 
 # Verifica se as variáveis de ambiente estão configuradas
 if not TOKEN or not URL_API:
